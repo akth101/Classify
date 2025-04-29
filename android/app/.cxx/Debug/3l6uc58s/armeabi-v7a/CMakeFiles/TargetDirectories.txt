@@ -1,0 +1,2 @@
+C:/Users/korea/Desktop/SOOJ/Classify/android/app/.cxx/Debug/3l6uc58s/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Users/korea/Desktop/SOOJ/Classify/android/app/.cxx/Debug/3l6uc58s/armeabi-v7a/CMakeFiles/rebuild_cache.dir
