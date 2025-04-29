@@ -4,7 +4,7 @@ import 'package:classify/routing/routes.dart';
 import 'package:classify/utils/top_level_setting.dart';
 
 class RootScreen extends StatefulWidget {
-const RootScreen({super.key, required this.child});
+  const RootScreen({super.key, required this.child});
   final Widget child;
   @override
   State<RootScreen> createState() => _RootScreenState();
@@ -36,14 +36,25 @@ class _RootScreenState extends State<RootScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          "classify", 
-          style: theme.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
+        title: TextButton(
+          onPressed: () {
+            // 할일 페이지로 이동
+            context.push(Routes.archive);
+          },
+          style: TextButton.styleFrom(
+            padding: EdgeInsets.zero,
+            minimumSize: Size.zero,
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          ),
+          child: Text(
+            "할일",
+            style: theme.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
           ),
         ),
         backgroundColor: AppTheme.primaryColor,
@@ -88,7 +99,9 @@ class _RootScreenState extends State<RootScreen> {
                 child: IconButton(
                   icon: Icon(
                     Icons.today,
-                    color: _selectedIndex == 0 ? AppTheme.primaryColor : AppTheme.textColor2,
+                    color: _selectedIndex == 0
+                        ? AppTheme.primaryColor
+                        : AppTheme.textColor2,
                     size: 26,
                   ),
                   tooltip: '오늘',
@@ -100,7 +113,9 @@ class _RootScreenState extends State<RootScreen> {
                 child: IconButton(
                   icon: Icon(
                     Icons.archive,
-                    color: _selectedIndex == 1 ? AppTheme.primaryColor : AppTheme.textColor2,
+                    color: _selectedIndex == 1
+                        ? AppTheme.primaryColor
+                        : AppTheme.textColor2,
                     size: 26,
                   ),
                   tooltip: '보관함',
