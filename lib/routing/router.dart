@@ -1,3 +1,6 @@
+import 'package:classify/data/repositories/memo/memo_repository.dart';
+import 'package:classify/ui/todo/view/todo_screen.dart';
+import 'package:classify/ui/todo/view_models/todo_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:classify/routing/routes.dart';
 import 'package:classify/ui/basics/root_screen.dart';
@@ -18,7 +21,6 @@ import 'package:classify/ui/setting/view_models/setting_viewmodel.dart';
 import 'package:classify/ui/today_act/view/today_act_screen.dart';
 import 'package:classify/ui/today_act/view_models/today_act_view_model.dart';
 import 'package:classify/ui/setting/widgets/privacy_policy_screen.dart';
-import 'package:classify/ui/todo/todo_screen.dart';
 
 final router = GoRouter(
   initialLocation:
@@ -63,7 +65,12 @@ final router = GoRouter(
     // 독립적인 전체 화면 라우트들
     GoRoute(
       path: Routes.todo,
-      builder: (context, state) => const TodoScreen(),
+      builder: (context, state) {
+        final memoRepository = context.read<MemoRepositoryRemote>();
+        return TodoScreen(
+          todoViewModel: TodoViewModel(memoRepository: memoRepository),
+        );
+      },
     ),
     GoRoute(
       path: Routes.sendMemo,
