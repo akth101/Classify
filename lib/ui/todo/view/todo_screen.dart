@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class TodoScreen extends StatefulWidget {
-  // const TodoScreen({super.key});
   final TodoViewModel todoViewModel;
 
   const TodoScreen({
@@ -18,15 +17,36 @@ class TodoScreen extends StatefulWidget {
   State<TodoScreen> createState() => _TodoScreenState();
 }
 
-class _TodoScreenState extends State<TodoScreen> {
+class _TodoScreenState extends State<TodoScreen>
+    with SingleTickerProviderStateMixin {
   final ValueNotifier<bool> _isLatestSort = ValueNotifier<bool>(true);
+  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
+    //탭 컨트롤러 초기화
+    _tabController = TabController(
+        length: widget.todoViewModel.availableStatuses.length, vsync: this);
+
+    // 탭 변경 시 상태 변경 처리
+    _tabController.addListener(() {
+      if (!_tabController.indexIsChanging) {
+        final status =
+            widget.todoViewModel.availableStatuses[_tabController.index];
+        widget.todoViewModel.changeStatus(status);
+      }
+    });
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       widget.todoViewModel.loadTodoData();
     });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   @override
@@ -36,6 +56,16 @@ class _TodoScreenState extends State<TodoScreen> {
         title: const Text('할 일'),
         elevation: 0,
         backgroundColor: AppTheme.primaryColor,
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: [
+            Tab(text: 'In Progress'),
+            Tab(text: 'Done'),
+          ],
+          indicatorColor: Colors.white,
+          labelColor: Colors.white,
+          unselectedLabelColor: Colors.white70,
+        ),
       ),
       body: ListenableBuilder(
           listenable: widget.todoViewModel,
@@ -52,10 +82,12 @@ class _TodoScreenState extends State<TodoScreen> {
             final todoList = widget.todoViewModel.todoList;
 
             if (todoList.isEmpty) {
-              return const Center(
+              return Center(
                 child: Text(
-                  '오늘의 할 일을 추가해주세요',
-                  style: TextStyle(
+                  widget.todoViewModel.currentStatus == 'In Progress'
+                      ? '진행 중인 할 일이 없습니다'
+                      : '완료된 할 일이 없습니다',
+                  style: const TextStyle(
                     fontSize: 16,
                     color: Colors.grey,
                   ),
@@ -145,7 +177,7 @@ class _TodoScreenState extends State<TodoScreen> {
 
   Widget _buildTodoCard(BuildContext context, MemoModel todo) {
     return Card(
-      margin: const EdgeInsets.all(16.0),
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -155,10 +187,14 @@ class _TodoScreenState extends State<TodoScreen> {
             child: Checkbox(
               value: todo.isDone,
               activeColor: AppTheme.primaryColor,
-              onChanged: (bool? value) {
-                if (value == true) {
-                  // 체크 시 할일 완료 처리 => 삭제
-                  widget.todoViewModel.deleteTodo(todo.memoId);
+              onChanged: (bool? value) async {
+                try {
+                  await widget.todoViewModel.toggleTodoStatus(todo);
+                } catch (e) {
+                  if (!mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('상태 변경 중 오류가 발생했습니다')),
+                  );
                 }
               },
             ),
@@ -166,25 +202,39 @@ class _TodoScreenState extends State<TodoScreen> {
           const SizedBox(width: 12),
           // 메모 내용
           Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12.0),
               child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                todo.title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    todo.title,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      decoration: todo.isDone == true
+                          ? TextDecoration.lineThrough
+                          : null,
+                      color: todo.isDone == true ? Colors.grey : Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    todo.content,
+                    style: TextStyle(
+                      fontSize: 14,
+                      decoration: todo.isDone == true
+                          ? TextDecoration.lineThrough
+                          : null,
+                      color: todo.isDone == true ? Colors.grey : Colors.black87,
+                    ),
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                  )
+                ],
               ),
-              const SizedBox(height: 8),
-              Text(
-                todo.content,
-                style: const TextStyle(fontSize: 14),
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-              )
-            ],
-          ))
+            ),
+          )
         ],
       ),
     );
