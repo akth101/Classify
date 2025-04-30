@@ -101,15 +101,8 @@ class TodoViewModel extends ChangeNotifier {
       // 로컬 데이터는 스트림 업데이트로 자동 갱신됨
       debugPrint('할일 상태 변경: ${todo.memoId}, isDone: ${updatedTodo.isDone}');
     } catch (e) {
-      _error = e.toString();
       notifyListeners();
       debugPrint('할일 상태 변경 오류: $e');
-
-      // 3초 후 에러 메시지 제거
-      Future.delayed(const Duration(seconds: 3), () {
-        _error = null;
-        notifyListeners();
-      });
     }
   }
 
