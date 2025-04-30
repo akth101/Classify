@@ -42,7 +42,7 @@ class _RootScreenState extends State<RootScreen> {
         title: TextButton(
           onPressed: () {
             // 할일 페이지로 이동
-            context.push(Routes.archive);
+            context.push(Routes.todo);
           },
           style: TextButton.styleFrom(
             padding: EdgeInsets.zero,

@@ -18,31 +18,33 @@ import 'package:classify/ui/setting/view_models/setting_viewmodel.dart';
 import 'package:classify/ui/today_act/view/today_act_screen.dart';
 import 'package:classify/ui/today_act/view_models/today_act_view_model.dart';
 import 'package:classify/ui/setting/widgets/privacy_policy_screen.dart';
+import 'package:classify/ui/todo/todo_screen.dart';
 
 final router = GoRouter(
-  initialLocation: firebaseAuth.currentUser != null ? Routes.today : Routes.login,
+  initialLocation:
+      firebaseAuth.currentUser != null ? Routes.today : Routes.login,
   routes: [
     ShellRoute(
-        builder: (context, state, child) => MultiProvider(
-    providers: [
-      ChangeNotifierProvider(
-        create: (context) => SendMemoToAiViewModel(
-          memoRepository: context.read<MemoRepositoryRemote>(),
-        ),
+      builder: (context, state, child) => MultiProvider(
+        providers: [
+          ChangeNotifierProvider(
+            create: (context) => SendMemoToAiViewModel(
+              memoRepository: context.read<MemoRepositoryRemote>(),
+            ),
+          ),
+          ChangeNotifierProvider(
+            create: (context) => ArchiveViewModel(
+              memoRepository: context.read<MemoRepositoryRemote>(),
+            ),
+          ),
+          ChangeNotifierProvider(
+            create: (context) => TodayActViewModel(
+              memoRepository: context.read<MemoRepositoryRemote>(),
+            ),
+          ),
+        ],
+        child: RootScreen(child: child),
       ),
-      ChangeNotifierProvider(
-        create: (context) => ArchiveViewModel(
-          memoRepository: context.read<MemoRepositoryRemote>(),
-        ),
-      ),
-      ChangeNotifierProvider(
-        create: (context) => TodayActViewModel(
-          memoRepository: context.read<MemoRepositoryRemote>(),
-        ),
-      ),
-    ],
-    child: RootScreen(child: child),
-  ),
       routes: [
         GoRoute(
           path: Routes.today,
@@ -59,6 +61,10 @@ final router = GoRouter(
       ],
     ),
     // 독립적인 전체 화면 라우트들
+    GoRoute(
+      path: Routes.todo,
+      builder: (context, state) => const TodoScreen(),
+    ),
     GoRoute(
       path: Routes.sendMemo,
       builder: (context, state) => SendMemoToAiScreen(

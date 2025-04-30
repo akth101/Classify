@@ -44,7 +44,10 @@ class _ArchiveScreenState extends State<ArchiveScreen> {
           final memos = widget.viewModel.cachedMemos;
           // clothmodel의 major 값들의 중복을 제거하여 유니크한 리스트 생성
           // final uniqueCategories = memos.values.map((c) => c.category).toSet().toList();
-          final uniqueCategories = ["할 일", "공부", "아이디어"];
+          final uniqueCategories = [
+            // "할 일",
+            "공부", "아이디어"
+          ];
 
           return DefaultTabController(
             length: uniqueCategories.length,
@@ -54,18 +57,18 @@ class _ArchiveScreenState extends State<ArchiveScreen> {
                   isScrollable: true,
                   labelColor: AppTheme.textColor1,
                   indicatorColor: AppTheme.primaryColor,
-                  tabs: uniqueCategories.map((category) => 
-                    Tab(text: category)
-                  ).toList(),
+                  tabs: uniqueCategories
+                      .map((category) => Tab(text: category))
+                      .toList(),
                 ),
                 Expanded(
                   child: TabBarView(
-                        children: uniqueCategories.map((category) {
+                    children: uniqueCategories.map((category) {
                       // 카테고리별로 다른 위젯 반환
                       switch (category) {
-                        case '할 일':
-                          return buildTodoTabView(memos, widget.viewModel);
-                        case '공부':                   
+                        // case '할 일':
+                        //   return buildTodoTabView(memos, widget.viewModel);
+                        case '공부':
                           return buildStudyTabView(memos, widget.viewModel);
                         case '아이디어':
                           return buildIdeaTabView(memos, widget.viewModel);
@@ -83,14 +86,3 @@ class _ArchiveScreenState extends State<ArchiveScreen> {
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
