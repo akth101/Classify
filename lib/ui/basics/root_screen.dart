@@ -50,7 +50,7 @@ class _RootScreenState extends State<RootScreen> {
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
           child: Text(
-            "할일",
+            "TODO_<3",
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.bold,
               color: Colors.white,

@@ -31,9 +31,24 @@ exports.analyzeMemo = onCall({
   const data = request.data || {};
   const memoText = data.memoText || "";
   const categories = data.categories || ["할 일", "공부", "아이디어"];
+
+  // 추가
+  const mode = data.mode || "default" 
+
   console.log("데이터 수신:", data);
   console.log("memoText:", memoText);
   console.log("categories:", categories);
+  console.log("default", mode);
+
+  // 모드에 따라 카테고리 결정
+  // let filteredCategories;
+  // if (mode == "todo") {
+  //   filteredCategories = ["할 일"]; // 할일 페이지에서는 할일 카테고리만
+  // } else {
+  //   filteredCategories = ["공부", "아이디어"];
+  // }
+  let filteredCategories = mode === "todo" ? ["할 일"] : ["공부", "아이디어"];
+
 
   // 메모 내용 검증
   if (!memoText) {
@@ -42,7 +57,8 @@ exports.analyzeMemo = onCall({
   }
 
   // 카테고리가 없으면 기본값 설정
-  const memoCategories = categories || ["할 일", "공부", "아이디어"];
+  // const memoCategories = categories || ["할 일", "공부", "아이디어"];
+  const memoCategories = filteredCategories;
 
   // 환경 변수에서 API 키 가져오기
   const apiKey = process.env.GEMINI_API_KEY;

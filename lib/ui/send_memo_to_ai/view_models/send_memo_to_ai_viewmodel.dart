@@ -1,3 +1,4 @@
+import 'package:classify/global/global.dart';
 import 'package:flutter/material.dart';
 import 'package:classify/data/repositories/memo/memo_repository.dart';
 
@@ -11,23 +12,33 @@ class SendMemoToAiViewModel extends ChangeNotifier {
 
   SendMemoToAiViewModel({
     required MemoRepository memoRepository,
-  }) : _memoRepository = memoRepository,
-  _isLoading = false,
-  _error = null;
+  })  : _memoRepository = memoRepository,
+        _isLoading = false,
+        _error = null;
 
   bool get isLoading => _isLoading;
   String? get error => _error;
 
-  Future<void> sendMemoToAi(String memo) async {
+  Future<void> sendMemoToAi(String memo, {String? mode}) async {
+    debugPrint('🟢 메모 전송 시작 : ${memo.length}자 (모드 ${mode ?? '기본'})');
     _isLoading = true;
     notifyListeners();
-    final result = await _memoRepository.analyzeAndSaveMemo(memo);
-    if (result != null) {
-      _error = result;
+    final result = await _memoRepository.analyzeAndSaveMemo(memo, mode: mode);
+    try {
+      if (result != null) {
+        _error = result;
+        debugPrint('🟢 메모 처리 오류 $_error');
+        notifyListeners();
+      } else {
+        debugPrint('🟢 메모 저장 성공 (모드 ${mode ?? '기본'})');
+      }
+    } catch (e) {
+      _error = e.toString();
+      debugPrint('🟢 예외 발생 $_error');
+      notifyListeners();
+    } finally {
+      _isLoading = false;
       notifyListeners();
     }
-    _isLoading = false;
-    notifyListeners();
   }
-
 }

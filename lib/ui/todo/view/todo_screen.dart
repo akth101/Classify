@@ -1,8 +1,10 @@
 import 'package:classify/data/repositories/memo/memo_repository_remote.dart';
 import 'package:classify/domain/models/memo/memo_model.dart';
+import 'package:classify/routing/routes.dart';
 import 'package:classify/ui/todo/view_models/todo_view_model.dart';
 import 'package:classify/utils/top_level_setting.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class TodoScreen extends StatefulWidget {
@@ -47,6 +49,30 @@ class _TodoScreenState extends State<TodoScreen>
   void dispose() {
     _tabController.dispose();
     super.dispose();
+  }
+
+  void _showDeleteConfirmDialog(BuildContext context, MemoModel todo) {
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: const Text('완료 삭제'),
+              content: const Text('이 항복을 삭제하시겠습니까 ?'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('취소'),
+                ),
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      widget.todoViewModel.deleteTodo(todo.memoId);
+                    },
+                    child: const Text(
+                      '삭제',
+                      style: TextStyle(color: Colors.red),
+                    ))
+              ],
+            ));
   }
 
   @override
@@ -138,6 +164,22 @@ class _TodoScreenState extends State<TodoScreen>
               ),
             );
           }),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          debugPrint('🔍🟢 TodoScreen: FAB 버튼이 클릭되었습니다!');
+          debugPrint('🔍🟢 TodoScreen: Routes.sendMemo로 이동 시도 중...');
+          try {
+            context.push(Routes.sendMemo, extra: {'mode': 'todo'});
+            debugPrint('✅🟢 TodoScreen: Routes.sendMemo로 이동 성공!');
+          } catch (e) {
+            debugPrint('❌🟢 TodoScreen: 라우팅 오류 발생: $e');
+          }
+        },
+        backgroundColor: AppTheme.accentColor,
+        elevation: 4,
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 
@@ -234,7 +276,13 @@ class _TodoScreenState extends State<TodoScreen>
                 ],
               ),
             ),
-          )
+          ),
+          if (todo.isDone == true)
+            IconButton(
+                onPressed: () {
+                  _showDeleteConfirmDialog(context, todo);
+                },
+                icon: const Icon(Icons.close, color: Colors.red))
         ],
       ),
     );

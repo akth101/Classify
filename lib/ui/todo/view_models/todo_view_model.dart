@@ -41,7 +41,7 @@ class TodoViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // 모든 메모 가져온 후, '할일' 카테고리만 필터링 (추후 분리예정)
+      // 모든 메모 가져온 후, '할 일' 카테고리만 필터링 (추후 분리예정)
       final allMemos = _memoRepository.getMemos();
       _processTodoData(allMemos);
 
@@ -115,14 +115,8 @@ class TodoViewModel extends ChangeNotifier {
       notifyListeners();
       debugPrint('할일 삭제 완료 : ${todoId}');
     } catch (e) {
-      _error = e.toString();
       notifyListeners();
       debugPrint('할일 삭제 오류: $e');
-
-      Future.delayed(const Duration(seconds: 3), () {
-        _error = null;
-        notifyListeners();
-      });
     }
   }
 

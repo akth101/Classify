@@ -74,11 +74,23 @@ final router = GoRouter(
     ),
     GoRoute(
       path: Routes.sendMemo,
-      builder: (context, state) => SendMemoToAiScreen(
-        sendMemoToAiViewModel: SendMemoToAiViewModel(
-          memoRepository: context.read<MemoRepositoryRemote>(),
-        ),
-      ),
+      builder: (context, state) {
+        // extra 파라미터에서 mode 값 추출 !
+        final extra = state.extra as Map<String, dynamic>?;
+        final mode = extra?['mode'];
+
+        return SendMemoToAiScreen(
+          sendMemoToAiViewModel: SendMemoToAiViewModel(
+            memoRepository: context.read<MemoRepositoryRemote>(),
+          ),
+          mode: mode,
+        );
+      },
+      // builder: (context, state) => SendMemoToAiScreen(
+      //   sendMemoToAiViewModel: SendMemoToAiViewModel(
+      //     memoRepository: context.read<MemoRepositoryRemote>(),
+      //   ),
+      // ),
     ),
     GoRoute(
       path: Routes.setting,

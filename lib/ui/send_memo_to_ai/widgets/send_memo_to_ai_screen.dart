@@ -4,10 +4,12 @@ import 'package:classify/utils/top_level_setting.dart';
 
 class SendMemoToAiScreen extends StatefulWidget {
   final SendMemoToAiViewModel _sendMemoToAiViewModel;
+  final String? mode;
 
   const SendMemoToAiScreen({
     super.key,
     required SendMemoToAiViewModel sendMemoToAiViewModel,
+    this.mode,
   }) : _sendMemoToAiViewModel = sendMemoToAiViewModel;
 
   @override
@@ -22,7 +24,7 @@ class _SendMemoToAiScreenState extends State<SendMemoToAiScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-    // 자동으로 키보드가 올라오도록 설정
+      // 자동으로 키보드가 올라오도록 설정
       _memoFocusNode.requestFocus();
     });
   }
@@ -43,16 +45,16 @@ class _SendMemoToAiScreenState extends State<SendMemoToAiScreen> {
 
     // 즉시 화면 닫기 (Optimistic UI)
     Navigator.pop(context);
-    
+
     // 백그라운드에서 메모 처리 진행
     _processMemoInBackground(text);
   }
-  
+
   // 백그라운드에서 메모 처리
   Future<void> _processMemoInBackground(String text) async {
     try {
-      await widget._sendMemoToAiViewModel.sendMemoToAi(text);
-      
+      await widget._sendMemoToAiViewModel.sendMemoToAi(text, mode: widget.mode);
+
       // 현재 화면은 이미 닫혔으므로 다른 방식으로 피드백 제공 필요
       if (widget._sendMemoToAiViewModel.error != null) {
         // 필요시 에러 처리 로직 추가 (예: 글로벌 스낵바, 로깅 등)
