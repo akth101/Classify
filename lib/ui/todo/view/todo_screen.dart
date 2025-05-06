@@ -42,8 +42,8 @@ class _TodoScreenState extends State<TodoScreen> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: TabBar(
-            tabs: const [
+          title: const TabBar(
+            tabs: [
               Tab(text: '진행 중'),
               Tab(text: '완료'),
             ],
@@ -152,6 +152,7 @@ class _TodoScreenState extends State<TodoScreen> {
         Text(
           '${widget.viewModel.cachedTodoModels.length}개',
           style: const TextStyle(
+            fontFamily: 'Pretendard',
             fontSize: 16,
             fontStyle: FontStyle.italic,
             color: AppTheme.textColor2,
@@ -228,12 +229,18 @@ class _TodoScreenState extends State<TodoScreen> {
               const SizedBox(height: 8),
               Text(
                 '${todoObject.createdAt.year}.${todoObject.createdAt.month}.${todoObject.createdAt.day}',
-                style: TextStyle(fontSize: 12, color: AppTheme.textColor1),
+                style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w300,
+                    color: AppTheme.textColor1),
               ),
               const SizedBox(height: 1),
               Text(
                 '${todoObject.createdAt.hour.toString().padLeft(2, '0')}:${todoObject.createdAt.minute.toString().padLeft(2, '0')}',
-                style: TextStyle(fontSize: 12, color: AppTheme.textColor1),
+                style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w300,
+                    color: AppTheme.textColor1),
               ),
               const SizedBox(height: 8),
             ],
